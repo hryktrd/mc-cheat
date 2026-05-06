@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(curl -s https://ocp.pontium.org/v1/models -H 'Authorization: Bearer sk-proj-LHF-0410ymFj5TYmCYuUzhBuYGt0GEkiRstjLpi3P06iWFzV6O6HiTBgcPqBicLC')",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s https://ocp.pontium.org/v1/models -H \"Authorization: Bearer sk-proj-LHF-0410ymFj5TYmCYuUzhBuYGt0GEkiRstjLpi3P06iWFzV6O6HiTBgcPqBicLC\")",
+      "Bash(wsl bash *)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

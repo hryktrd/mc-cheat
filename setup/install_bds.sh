@@ -1,27 +1,37 @@
 #!/bin/bash
 # WSL2上にMinecraft Bedrock Dedicated Server (BDS) をセットアップするスクリプト
-# 実行前に https://www.minecraft.net/en-us/download/server/bedrock で
-# 最新のBDSバージョン番号を確認して BDS_VERSION を更新してください
+# バージョン省略時は Bedrock-OSS/BDS-Versions から自動取得します
 
 set -e
 
-BDS_VERSION="${1:-1.21.80.03}"
 BDS_DIR="${HOME}/bds"
 PACK_DIR="$(dirname "$(realpath "$0")")/../behavior_pack"
-
-echo "=== BDS ${BDS_VERSION} のセットアップを開始します ==="
 
 # ── 依存パッケージ ─────────────────────────────────────────────────────────
 echo ">>> 依存パッケージのインストール..."
 sudo apt-get update -qq
-sudo apt-get install -y -qq curl unzip libcurl4 libssl-dev
+sudo apt-get install -y -qq curl unzip libcurl4 libssl-dev jq
+
+# ── BDSバージョン・ダウンロードURL の取得 ──────────────────────────────────
+# 引数でバージョン指定があればそれを使い、なければ最新安定版を自動取得
+if [ -n "$1" ]; then
+  BDS_VERSION="$1"
+  BDS_URL="https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-${BDS_VERSION}.zip"
+else
+  echo ">>> 最新BDSバージョンを取得中..."
+  VERSIONS_JSON=$(curl -fsSL "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/versions.json")
+  BDS_VERSION=$(echo "${VERSIONS_JSON}" | jq -r '.linux.stable')
+  META_JSON=$(curl -fsSL "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/linux/${BDS_VERSION}.json")
+  BDS_URL=$(echo "${META_JSON}" | jq -r '.download_url')
+fi
+
+echo "=== BDS ${BDS_VERSION} のセットアップを開始します ==="
+echo "URL: ${BDS_URL}"
 
 # ── BDSダウンロード ────────────────────────────────────────────────────────
 echo ">>> BDS ${BDS_VERSION} をダウンロード中..."
 mkdir -p "${BDS_DIR}"
-curl -fsSL \
-  "https://minecraft.azureedge.net/bin-linux/bedrock-server-${BDS_VERSION}.zip" \
-  -o /tmp/bds.zip
+curl -fsSL "${BDS_URL}" -o /tmp/bds.zip
 
 echo ">>> 展開中..."
 unzip -q -o /tmp/bds.zip -d "${BDS_DIR}"
