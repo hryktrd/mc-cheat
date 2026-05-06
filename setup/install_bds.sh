@@ -19,9 +19,9 @@ if [ -n "$1" ]; then
   BDS_URL="https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-${BDS_VERSION}.zip"
 else
   echo ">>> 最新BDSバージョンを取得中..."
-  VERSIONS_JSON=$(curl -fsSL "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/versions.json")
+  VERSIONS_JSON=$(curl -fsSL --http1.1 "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/versions.json")
   BDS_VERSION=$(echo "${VERSIONS_JSON}" | jq -r '.linux.stable')
-  META_JSON=$(curl -fsSL "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/linux/${BDS_VERSION}.json")
+  META_JSON=$(curl -fsSL --http1.1 "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/linux/${BDS_VERSION}.json")
   BDS_URL=$(echo "${META_JSON}" | jq -r '.download_url')
 fi
 
@@ -31,7 +31,7 @@ echo "URL: ${BDS_URL}"
 # ── BDSダウンロード ────────────────────────────────────────────────────────
 echo ">>> BDS ${BDS_VERSION} をダウンロード中..."
 mkdir -p "${BDS_DIR}"
-curl -fsSL "${BDS_URL}" -o /tmp/bds.zip
+curl -fsSL --http1.1 "${BDS_URL}" -o /tmp/bds.zip
 
 echo ">>> 展開中..."
 unzip -q -o /tmp/bds.zip -d "${BDS_DIR}"
