@@ -1,0 +1,17 @@
+{
+  "name": "mc-cheat",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "deploy": "node esbuild.config.mjs && bash ../setup/deploy.sh",
+    "watch": "node esbuild.config.mjs --watch"
+  },
+  "devDependencies": {
+    "@minecraft/server": "1.14.0-beta",
+    "@minecraft/server-net": "1.0.0-beta",
+    "dotenv": "^16.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.4.0"
+  }
+}
